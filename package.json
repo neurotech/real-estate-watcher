@@ -1,0 +1,24 @@
+{
+  "name": "real-estate-watcher",
+  "version": "1.0.0",
+  "description": "Query domain.com.au's API for listings daily and send alerts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neurotech/real-estate-watcher.git"
+  },
+  "author": "Tim Douglas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neurotech/real-estate-watcher/issues"
+  },
+  "homepage": "https://github.com/neurotech/real-estate-watcher#readme",
+  "dependencies": {
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
+    "tiny-json-http": "^7.2.0"
+  }
+}
