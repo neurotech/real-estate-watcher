@@ -1,0 +1,35 @@
+name: 💽 Deploy Real Estate Watcher Lambda
+
+on:
+  push:
+    branches: master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Use Node.js 12.x to install npm packages
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - run: cd lambda && npm install && cd ..
+      env:
+        CI: true
+
+    - name: Create RealEstateWatcher Lambda deployment package
+      uses: edgarrc/action-7z@v1.0.4
+      with:
+        args: 7z a deployment.zip *
+
+    - name: Deploy RealEstateWatcher Lambda deployment package to AWS
+      uses: appleboy/lambda-action@master
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_region: ${{ secrets.AWS_REGION }}
+        function_name: RealEstateWatcher
+        zip_file: deployment.zip
