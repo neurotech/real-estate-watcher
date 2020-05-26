@@ -16,7 +16,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: cd lambda && npm install && cd ..
+    - run: npm install
       env:
         CI: true
 
