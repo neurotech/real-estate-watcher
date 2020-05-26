@@ -6,5 +6,8 @@ Query domain.com.au's API for listings daily and send alerts.
 - Modularise functionality
 - Unit tests
 - DynamoDB support for tracking "found" properties over time
+
+## DONE
+
 - Lambda support
 - Implementation with AWS EventBridge
