@@ -84,23 +84,7 @@ function generateDiscordMessage(listings) {
   return message;
 }
 
-async function getListings() {
-  try {
-    let response = await tiny.post(requestOptions);
-    let listings = await filterAndMapListings(response.body);
-
-    if (listings.length > 0) {
-      let messages = generateDiscordMessage(listings);
-      await tiny.post({ url: discordWebhookUrl, data: messages });
-    } else {
-      console.log("No listings found that match filter.");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-exports.handler = async (event) => {
+exports.handler = async () => {
   try {
     let response = await tiny.post(requestOptions);
     let listings = await filterAndMapListings(response.body);
@@ -116,10 +100,13 @@ exports.handler = async (event) => {
     } else {
       return {
         statusCode: 200,
-        body: JSON.stringify("No listings found that match filter."),
+        body: JSON.stringify("No listings found."),
       };
     }
   } catch (error) {
-    console.error(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify(error),
+    };
   }
 };
