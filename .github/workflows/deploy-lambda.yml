@@ -12,11 +12,12 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
 
-    - name: Use Node.js 12.x to install npm packages
+    - name: Use Node.js 12.x to install npm packages and run tests
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
     - run: npm install
+    - run: npm test
       env:
         CI: true
 
