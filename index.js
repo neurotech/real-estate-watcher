@@ -100,4 +100,26 @@ async function getListings() {
   }
 }
 
-getListings();
+exports.handler = async (event) => {
+  try {
+    let response = await tiny.post(requestOptions);
+    let listings = await filterAndMapListings(response.body);
+
+    if (listings.length > 0) {
+      let messages = generateDiscordMessage(listings);
+      await tiny.post({ url: discordWebhookUrl, data: messages });
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify("OK"),
+      };
+    } else {
+      return {
+        statusCode: 200,
+        body: JSON.stringify("No listings found that match filter."),
+      };
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
