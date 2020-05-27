@@ -1,3 +1,4 @@
+const db = require("./dynamo.js");
 const request = require("request-promise-native");
 
 module.exports = async function filterAndMapListings(listings) {
@@ -10,25 +11,31 @@ module.exports = async function filterAndMapListings(listings) {
 
   if (filteredListings.length > 0) {
     for (const filteredListing of filteredListings) {
-      let image = "";
+      let seen = await db.getById(filteredListing.listing.id);
 
-      if (filteredListing.listing.media.length > 0) {
-        let imageUrl = `${filteredListing.listing.media[0].url}/300x200`;
-        let actualImageUrl = await request({
-          uri: imageUrl,
-          resolveWithFullResponse: true,
+      if (!seen.Item) {
+        await db.addById(filteredListing.listing.id);
+
+        let image = "";
+
+        if (filteredListing.listing.media.length > 0) {
+          let imageUrl = `${filteredListing.listing.media[0].url}/300x200`;
+          let actualImageUrl = await request({
+            uri: imageUrl,
+            resolveWithFullResponse: true,
+          });
+          image = actualImageUrl.request.uri.href;
+        }
+
+        result.push({
+          id: filteredListing.listing.id,
+          address: filteredListing.listing.propertyDetails.displayableAddress,
+          headline: filteredListing.listing.headline,
+          image: image,
+          url: `https://domain.com.au/${filteredListing.listing.listingSlug}`,
+          price: filteredListing.listing.priceDetails.displayPrice,
         });
-        image = actualImageUrl.request.uri.href;
       }
-
-      result.push({
-        id: filteredListing.listing.id,
-        address: filteredListing.listing.propertyDetails.displayableAddress,
-        headline: filteredListing.listing.headline,
-        image: image,
-        url: `https://domain.com.au/${filteredListing.listing.listingSlug}`,
-        price: filteredListing.listing.priceDetails.displayPrice,
-      });
     }
   }
 
