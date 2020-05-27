@@ -25,5 +25,8 @@
   "devDependencies": {
     "tap-spec-emoji": "^6.1.2",
     "tape": "^5.0.1"
+  },
+  "optionalDependencies": {
+    "aws-sdk": "^2.684.0"
   }
 }
