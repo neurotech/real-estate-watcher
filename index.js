@@ -1,6 +1,7 @@
-const tiny = require("tiny-json-http");
+const dynamo = require("./dynamo.js");
 const filterAndMapListings = require("./filterAndMapListings.js");
 const generateDiscordMessage = require("./generateDiscordMessage.js");
+const tiny = require("tiny-json-http");
 
 const apiKey = process.env.REAL_ESTATE_WATCHER_DOMAIN_API_KEY;
 const listingUrl = "https://api.domain.com.au/v1/listings/residential/_search";
