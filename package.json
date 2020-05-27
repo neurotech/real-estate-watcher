@@ -4,6 +4,7 @@
   "description": "Query domain.com.au's API for listings daily and send alerts.",
   "main": "index.js",
   "scripts": {
+    "start": "node run.js",
     "test": "node test"
   },
   "repository": {
