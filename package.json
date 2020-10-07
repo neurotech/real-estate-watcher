@@ -19,8 +19,8 @@
   "homepage": "https://github.com/neurotech/real-estate-watcher#readme",
   "dependencies": {
     "request": "^2.88.2",
-    "request-promise-native": "^1.0.8",
-    "tiny-json-http": "^7.2.0"
+    "request-promise-native": "^1.0.9",
+    "tiny-json-http": "^7.3.0"
   },
   "devDependencies": {
     "tap-spec-emoji": "^6.1.2",
