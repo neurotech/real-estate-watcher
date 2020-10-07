@@ -21,6 +21,14 @@ const searchBody = {
       postCode: "",
       includeSurroundingSuburbs: false,
     },
+    {
+      state: "NSW",
+      region: "",
+      area: "",
+      suburb: "Cremorne",
+      postCode: "",
+      includeSurroundingSuburbs: false,
+    },
   ],
 };
 

@@ -1,25 +1,57 @@
 const db = require("./dynamo.js");
 const request = require("request-promise-native");
 
-module.exports = async function filterAndMapListings(listings) {
+module.exports = async function filterAndMapListings(allListings) {
   let result = [];
-  let filteredListings = listings.filter((listing) => {
-    return listing.listing.propertyDetails.street
+  let combinedListings = [];
+
+  let projectListings = allListings.filter((listing) => {
+    return listing.type === "Project";
+  });
+
+  projectListings.length > 0 &&
+    projectListings.forEach((projectListing) => {
+      projectListing &&
+        projectListing.listings.length > 0 &&
+        projectListing.listings.forEach((l) => combinedListings.push(l));
+    });
+
+  let propertyListings = allListings.filter((listing) => {
+    return listing.type === "PropertyListing";
+  });
+
+  propertyListings.length > 0 &&
+    propertyListings.forEach((propertyListing) => {
+      combinedListings.push(propertyListing.listing);
+    });
+
+  let filteredListings = combinedListings.filter((listing) => {
+    let containsNandiAve = listing.propertyDetails.street
       .toLowerCase()
-      .includes("nandi");
+      .includes("nandi av");
+
+    let containsYoungStreet = listing.propertyDetails.street
+      .toLowerCase()
+      .includes("young st");
+
+    let containsBenelongLane = listing.propertyDetails.street
+      .toLowerCase()
+      .includes("benelong l");
+
+    return containsNandiAve || containsYoungStreet || containsBenelongLane;
   });
 
   if (filteredListings.length > 0) {
     for (const filteredListing of filteredListings) {
-      let seen = await db.getById(filteredListing.listing.id);
+      let seen = await db.getById(filteredListing.id);
 
       if (!seen.Item) {
-        await db.addById(filteredListing.listing.id);
+        await db.addById(filteredListing.id);
 
         let image = "";
 
-        if (filteredListing.listing.media.length > 0) {
-          let imageUrl = `${filteredListing.listing.media[0].url}/300x200`;
+        if (filteredListing.media.length > 0) {
+          let imageUrl = `${filteredListing.media[0].url}/300x200`;
           let actualImageUrl = await request({
             uri: imageUrl,
             resolveWithFullResponse: true,
@@ -28,12 +60,12 @@ module.exports = async function filterAndMapListings(listings) {
         }
 
         result.push({
-          id: filteredListing.listing.id,
-          address: filteredListing.listing.propertyDetails.displayableAddress,
-          headline: filteredListing.listing.headline,
+          id: filteredListing.id,
+          address: filteredListing.propertyDetails.displayableAddress,
+          headline: filteredListing.headline,
           image: image,
-          url: `https://domain.com.au/${filteredListing.listing.listingSlug}`,
-          price: filteredListing.listing.priceDetails.displayPrice,
+          url: `https://domain.com.au/${filteredListing.listingSlug}`,
+          price: filteredListing.priceDetails.displayPrice,
         });
       }
     }
