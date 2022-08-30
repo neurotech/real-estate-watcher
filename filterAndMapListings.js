@@ -38,7 +38,16 @@ module.exports = async function filterAndMapListings(allListings) {
       .toLowerCase()
       .includes("benelong l");
 
-    return containsNandiAve || containsYoungStreet || containsBenelongLane;
+    let containsDalleyStreet = listing.propertyDetails.street
+      .toLowerCase()
+      .includes("dalley s");
+
+    return (
+      containsNandiAve ||
+      containsYoungStreet ||
+      containsBenelongLane ||
+      containsDalleyStreet
+    );
   });
 
   if (filteredListings.length > 0) {

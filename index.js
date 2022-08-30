@@ -11,7 +11,6 @@ const searchBody = {
   listingType: "Sale",
   minBedrooms: 1,
   minBathrooms: 1,
-  minCarspaces: 1,
   locations: [
     {
       state: "NSW",
@@ -26,6 +25,14 @@ const searchBody = {
       region: "",
       area: "",
       suburb: "Cremorne",
+      postCode: "",
+      includeSurroundingSuburbs: false,
+    },
+    {
+      state: "NSW",
+      region: "",
+      area: "",
+      suburb: "Queenscliff",
       postCode: "",
       includeSurroundingSuburbs: false,
     },
@@ -52,12 +59,18 @@ exports.handler = async () => {
         body: JSON.stringify("OK"),
       };
     } else {
+      const body = JSON.stringify("No listings found.");
+
+      console.log(body);
+
       return {
         statusCode: 200,
-        body: JSON.stringify("No listings found."),
+        body,
       };
     }
   } catch (error) {
+    console.error(error);
+
     return {
       statusCode: 500,
       body: JSON.stringify(error),
