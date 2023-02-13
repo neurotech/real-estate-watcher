@@ -1,10 +1,10 @@
-module.exports = function generateDiscordMessage(listings) {
+module.exports = function generateDiscordMessage(listings, listingType) {
   let message = {};
 
   message.embeds = listings.map((listing) => {
     return {
       color: 7405538,
-      title: `${listing.address}`,
+      title: `For ${listingType}: ${listing.address}`,
       url: listing.url,
       description: listing.headline,
       image: {

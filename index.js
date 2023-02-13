@@ -6,66 +6,75 @@ const tiny = require("tiny-json-http");
 const apiKey = process.env.REAL_ESTATE_WATCHER_DOMAIN_API_KEY;
 const listingUrl = "https://api.domain.com.au/v1/listings/residential/_search";
 const discordWebhookUrl = process.env.REAL_ESTATE_WATCHER_DISCORD_WEBHOOK_URL;
-const searchBody = {
-  pageSize: 200,
-  listingType: "Sale",
-  minBedrooms: 1,
-  minBathrooms: 1,
-  locations: [
-    {
-      state: "NSW",
-      region: "",
-      area: "",
-      suburb: "Frenchs Forest",
-      postCode: "",
-      includeSurroundingSuburbs: false,
-    },
-    {
-      state: "NSW",
-      region: "",
-      area: "",
-      suburb: "Cremorne",
-      postCode: "",
-      includeSurroundingSuburbs: false,
-    },
-    {
-      state: "NSW",
-      region: "",
-      area: "",
-      suburb: "Queenscliff",
-      postCode: "",
-      includeSurroundingSuburbs: false,
-    },
-  ],
-};
+const locations = [
+  {
+    state: "NSW",
+    region: "",
+    area: "",
+    suburb: "Frenchs Forest",
+    postCode: "",
+    includeSurroundingSuburbs: false,
+  },
+  {
+    state: "NSW",
+    region: "",
+    area: "",
+    suburb: "Cremorne",
+    postCode: "",
+    includeSurroundingSuburbs: false,
+  },
+  {
+    state: "NSW",
+    region: "",
+    area: "",
+    suburb: "Queenscliff",
+    postCode: "",
+    includeSurroundingSuburbs: false,
+  },
+];
 
-let requestOptions = {
-  url: listingUrl,
-  headers: { "X-API-Key": apiKey },
-  data: searchBody,
+const checkForListings = async (listingType) => {
+  const requestOptions = {
+    url: listingUrl,
+    headers: { "X-API-Key": apiKey },
+    data: {
+      pageSize: 200,
+      listingType,
+      minBedrooms: 1,
+      minBathrooms: 1,
+      locations,
+    },
+  };
+
+  const response = await tiny.post(requestOptions);
+  const listings = await filterAndMapListings(response.body);
+
+  if (listings.length > 0) {
+    const messages = generateDiscordMessage(listings, listingType);
+    await tiny.post({ url: discordWebhookUrl, data: messages });
+    return listings.length;
+  } else {
+    const body = JSON.stringify(`No ${listingType} listings found.`);
+    console.log(body);
+    return 0;
+  }
 };
 
 exports.handler = async () => {
   try {
-    let response = await tiny.post(requestOptions);
-    let listings = await filterAndMapListings(response.body);
+    const saleListings = await checkForListings("Sale");
+    const rentListings = await checkForListings("Rent");
+    const listings = saleListings + rentListings;
 
-    if (listings.length > 0) {
-      let messages = generateDiscordMessage(listings);
-      await tiny.post({ url: discordWebhookUrl, data: messages });
-
+    if (listings > 0) {
       return {
         statusCode: 200,
         body: JSON.stringify("OK"),
       };
     } else {
-      const body = JSON.stringify("No listings found.");
-
-      console.log(body);
-
       return {
         statusCode: 200,
-        body,
+        body: JSON.stringify("No listings found."),
       };
     }
   } catch (error) {
