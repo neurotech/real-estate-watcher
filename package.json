@@ -20,12 +20,12 @@
   "dependencies": {
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "tiny-json-http": "^7.3.0"
+    "tiny-json-http": "^7.4.2"
   },
   "devDependencies": {
-    "tape": "^5.0.1"
+    "tape": "^5.6.3"
   },
   "optionalDependencies": {
-    "aws-sdk": "^2.684.0"
+    "aws-sdk": "^2.1314.0"
   }
 }
